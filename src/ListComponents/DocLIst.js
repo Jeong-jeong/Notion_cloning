@@ -1,3 +1,4 @@
+import { ACTIVE_SAVE_KEY, TOGGLE_SAVE_KEY } from '../constants.js'
 import { pushUrl } from '../router.js'
 import { removeItem, setItem, getItem } from '../storage.js'
 
@@ -14,24 +15,32 @@ export default function DocList({
 
   this.state = initialState
 
-  this.setState = (nextState) => {
+  this.setState = async (nextState) => {
     this.state = nextState
-    this.render()
+    await this.render()
+
+    if (getItem(ACTIVE_SAVE_KEY, false)) {
+      const { id } = getItem(ACTIVE_SAVE_KEY)
+      const scrollTarget = document.querySelector(`li[data-id='${id}']`)
+      scrollTarget.scrollIntoView({
+        block: 'center', // TODO: safari, IE 호환성 때문에 옵션말고 true 값도 고려할 것
+      })
+    }
   }
 
   this.render = () => {
-    console.log('render 실행')
+    // $docList.scrollIntoView(getItem(OFFSET_KEY, 0))
     const recursiveDocuments = (documents, depth = 1) =>
       ($docList.innerHTML = `<ul class = 'doc-list'>
       ${documents
         .map(
           ({ id, title, documents }) =>
             `<li data-id=${id} class='doc-list-item ${
-              Number(getItem('temp-doc', '').id) === id ? 'actived' : ''
+              Number(getItem(ACTIVE_SAVE_KEY, '').id) === id ? 'actived' : ''
             }'
             >
               <div class='doc-list-item-wrapper ${
-                getItem(`toggle-doc-${id}`, false) ? 'toggled' : ''
+                getItem(TOGGLE_SAVE_KEY(id), false) ? 'toggled' : ''
               }'
                 style='padding-left: ${depth * paddingDepth}px'
               >
@@ -42,7 +51,7 @@ export default function DocList({
                 </div>
               </div>
               ${
-                !getItem(`toggle-doc-${id}`, false)
+                !getItem(TOGGLE_SAVE_KEY(id), false)
                   ? recursiveDocuments(documents, depth + 1)
                   : ''
               }
@@ -55,37 +64,37 @@ export default function DocList({
     recursiveDocuments(this.state)
   }
 
-  $docList.addEventListener('click', (e) => {
+  $docList.addEventListener('click', async (e) => {
     // list의 id 전달
     const { target } = e
     const $li = target.closest('li')
     if ($li) {
       const $liInner = $li.querySelector('.doc-list-item-wrapper')
       const { id } = $li.dataset
-      let tempToggleSaveKey = `toggle-doc-${id}`
-      let tempActiveSaveKey = `temp-doc`
+      const targetTop = target.getBoundingClientRect().top
 
       switch (target.className) {
         case 'add-button':
-          addDoc(id)
+          await addDoc(id)
           break
         case 'delete-button':
-          deleteDoc(id)
+          await deleteDoc(id)
           break
         case 'doc-list-item-wrapper ':
         case 'doc-list-item-wrapper toggled':
-          pushUrl(`/documents/${id}`)
+          await pushUrl(`/documents/${id}`) // 여기서 render 이루어짐
+
           if ($li.querySelector('ul > li')) {
-            setItem(tempToggleSaveKey, true)
+            // 눌렀을 때 자식이 있다면 li의 id를 스토리지에 키로 저장, toggled 클래스 추가
+            setItem(TOGGLE_SAVE_KEY(id), true)
             $liInner.classList.add('toggled')
           } else {
-            removeItem(tempToggleSaveKey)
+            removeItem(TOGGLE_SAVE_KEY(id))
             $liInner.classList.remove('toggled')
           }
-          setItem(tempActiveSaveKey, {
+          setItem(ACTIVE_SAVE_KEY, {
             id,
           })
-          this.render()
           break
         default:
           break
