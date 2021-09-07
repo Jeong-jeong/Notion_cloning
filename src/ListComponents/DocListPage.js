@@ -12,7 +12,6 @@ export default function DocListPage({ $target, initialState = [] }) {
 
   this.setState = async () => {
     const nextState = await fetchDocs()
-    console.log(nextState)
     this.state = nextState
 
     isArrayValid(this.state) && docList.setState(this.state)
@@ -31,15 +30,13 @@ export default function DocListPage({ $target, initialState = [] }) {
           parent: id,
         }),
       })
-      // fetchDocs() // addDoc 내부에서 fetch하고 state 변경
-      this.setState();
+      this.setState()
     },
     deleteDoc: async (id) => {
       await request(`/documents/${id}`, {
         method: 'DELETE',
       })
-      // fetchDocs() // deleteDoc 내부에서 fetch하고 state 변경
-      this.setState();
+      this.setState()
       pushUrl('/')
     },
   })
@@ -54,14 +51,11 @@ export default function DocListPage({ $target, initialState = [] }) {
           parent: null,
         }),
       })
-      // fetchDocs() // onClick 내부에서 fetch하고 state 변경
-      this.setState();
+      this.setState()
     },
   })
 
   const fetchDocs = async () => {
     return await request('/documents')
   }
-
-  this.setState();
 }
