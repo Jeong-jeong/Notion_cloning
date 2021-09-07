@@ -73,9 +73,10 @@ export default function DocEditPage({
   const fetchDoc = async () => {
     const { id } = this.state
     if (id) {
-      const nextDoc = await request(`/documents/${id}`)
+      const nextDoc = await request(`/documents/${id}`) // 특정 문서 불러오기
 
       getStorageValue = getItem(tempDocSaveKey, {
+        // 스토리지 값 불러오기
         id: '',
         title: '',
         content: '',
@@ -87,7 +88,6 @@ export default function DocEditPage({
         // 스토리지가 더 최신일 경우
       ) {
         this.setState(getStorageValue) // state 변경
-        pushUrl(`/documents/${id}`)
         await request(`/documents/${id}`, {
           // 문서 수정
           method: 'PUT',
@@ -97,6 +97,7 @@ export default function DocEditPage({
           }),
         })
         removeItem(tempDocSaveKey) // 스토리지 삭제
+        pushUrl(`/documents/${id}`)
         return
       }
 
