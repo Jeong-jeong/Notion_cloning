@@ -22,9 +22,10 @@ export default function DocList({
     if (getItem(ACTIVE_SAVE_KEY, false)) {
       const { id } = getItem(ACTIVE_SAVE_KEY)
       const scrollTarget = document.querySelector(`li[data-id='${id}']`)
-      scrollTarget.scrollIntoView({
-        block: 'center', // TODO: safari, IE 호환성 때문에 옵션말고 true 값도 고려할 것
-      })
+      scrollTarget &&
+        scrollTarget.scrollIntoView({
+          block: 'center', // TODO: safari, IE 호환성 때문에 옵션말고 true 값도 고려할 것
+        })
     }
   }
 
