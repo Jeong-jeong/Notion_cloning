@@ -29,7 +29,6 @@ export default function DocList({
   }
 
   this.render = () => {
-    // $docList.scrollIntoView(getItem(OFFSET_KEY, 0))
     const recursiveDocuments = (documents, depth = 1) =>
       ($docList.innerHTML = `<ul class = 'doc-list'>
       ${documents
@@ -40,7 +39,9 @@ export default function DocList({
             }'
             >
               <div class='doc-list-item-wrapper ${
-                getItem(TOGGLE_SAVE_KEY(id), false) ? 'toggled' : ''
+                Number(getItem(TOGGLE_SAVE_KEY, false)[`${id}`])
+                  ? 'toggled'
+                  : ''
               }'
                 style='padding-left: ${depth * paddingDepth}px'
               >
@@ -51,7 +52,7 @@ export default function DocList({
                 </div>
               </div>
               ${
-                !getItem(TOGGLE_SAVE_KEY(id), false)
+                !Number(getItem(TOGGLE_SAVE_KEY, false)[`${id}`])
                   ? recursiveDocuments(documents, depth + 1)
                   : ''
               }
@@ -71,7 +72,6 @@ export default function DocList({
     if ($li) {
       const $liInner = $li.querySelector('.doc-list-item-wrapper')
       const { id } = $li.dataset
-      const targetTop = target.getBoundingClientRect().top
 
       switch (target.className) {
         case 'add-button':
@@ -86,11 +86,18 @@ export default function DocList({
 
           if ($li.querySelector('ul > li')) {
             // 눌렀을 때 자식이 있다면 li의 id를 스토리지에 키로 저장, toggled 클래스 추가
-            setItem(TOGGLE_SAVE_KEY(id), true)
+            setItem(TOGGLE_SAVE_KEY, {
+              ...getItem(TOGGLE_SAVE_KEY),
+              [id]: true,
+            })
             $liInner.classList.add('toggled')
           } else {
-            removeItem(TOGGLE_SAVE_KEY(id))
-            $liInner.classList.remove('toggled')
+            const nextToggleValue = getItem(TOGGLE_SAVE_KEY)
+            if (nextToggleValue) {
+              delete nextToggleValue[`${id}`]
+              setItem(TOGGLE_SAVE_KEY, nextToggleValue)
+              $liInner.classList.remove('toggled')
+            }
           }
           setItem(ACTIVE_SAVE_KEY, {
             id,
