@@ -11,8 +11,6 @@
     height: 10px;
   }
   &::-webkit-scrollbar-thumb {
-    // width: 10px;
-    // height: 10px;
     border-radius: $border-radious;
     background-color: $list-lighter-color;
   }
@@ -82,17 +80,17 @@
     transition: background-color 200ms;
     padding: $list-button-padding;
 
-    .drop-down-arrow {
+    .dropdown-arrow {
       display: inline-block;
       width: 9px;
       height: 12px;
       margin-right: 5px;
-      background: url(/images/drop-down-arrow.png) no-repeat center/contain;
+      background: url(/images/dropdown-arrow.png) no-repeat center/contain;
       transform: rotate(0deg);
     }
 
     &.toggled {
-      & > .drop-down-arrow {
+      & > .dropdown-arrow {
         transform: rotate(-90deg);
       }
     }

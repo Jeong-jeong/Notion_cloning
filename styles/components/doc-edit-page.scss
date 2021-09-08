@@ -1,8 +1,9 @@
 .doc-edit-page {
   width: 100%;
   padding: 80px;
+  flex-shrink: 0;
 
-  input {
+  .edit-input {
     width: 100%;
     padding: $list-button-padding;
     background-color: #fff;
@@ -11,7 +12,7 @@
     font-weight: 500;
     border-radius: $border-radious;
 
-    &:hover {
+    &:focus {
       background-color: #eee;
     }
   }
