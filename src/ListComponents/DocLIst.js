@@ -45,7 +45,9 @@ export default function DocList({
               }'
                 style='padding-left: ${depth * paddingDepth}px'
               >
-                <i class ='dropdown-arrow'></i>${title}
+                <i class ='dropdown-arrow ${
+                  documents.length > 0 ? '' : 'hidden'
+                }'></i>${title}
                 <div class='button-wrapper'>
                   <button type='button' class='delete-button' title='삭제하기'>-</button>
                   <button type='button' class='add-button' title='추가하기'>+</button>
@@ -73,9 +75,19 @@ export default function DocList({
       const $liInner = $li.querySelector('.doc-list-item-wrapper')
       const { id } = $li.dataset
 
+      const deleteToggle = (id) => {
+        const nextToggleValue = getItem(TOGGLE_SAVE_KEY)
+        if (nextToggleValue) {
+          delete nextToggleValue[`${id}`]
+          setItem(TOGGLE_SAVE_KEY, nextToggleValue)
+          $liInner.classList.remove('toggled')
+        }
+      }
+
       switch (target.className) {
         case 'add-button':
           await addDoc(id)
+          deleteToggle(id)
           break
         case 'delete-button':
           await deleteDoc(id)
@@ -93,12 +105,7 @@ export default function DocList({
             })
             $liInner.classList.add('toggled')
           } else {
-            const nextToggleValue = getItem(TOGGLE_SAVE_KEY)
-            if (nextToggleValue) {
-              delete nextToggleValue[`${id}`]
-              setItem(TOGGLE_SAVE_KEY, nextToggleValue)
-              $liInner.classList.remove('toggled')
-            }
+            deleteToggle(id)
           }
           setItem(ACTIVE_SAVE_KEY, {
             id,
