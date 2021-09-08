@@ -11,8 +11,6 @@
     height: 10px;
   }
   &::-webkit-scrollbar-thumb {
-    // width: 10px;
-    // height: 10px;
     border-radius: $border-radious;
     background-color: $list-lighter-color;
   }
