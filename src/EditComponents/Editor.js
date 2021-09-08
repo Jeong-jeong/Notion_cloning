@@ -3,6 +3,7 @@ import { setCaret } from './positionCaret.js'
 export default function Editor({ $target, initialState, onEditing }) {
   const $editor = document.createElement('div')
   let isInitialize = false // 렌더링을 한번만
+  let timerId // 디바운스
 
   $editor.className = 'editor-wrap'
   $target.appendChild($editor) // 가장 하위 요소는 바로 render 해줌
@@ -34,11 +35,9 @@ export default function Editor({ $target, initialState, onEditing }) {
 
   this.render()
 
-  let timerId
   $editor.addEventListener('keyup', (e) => {
     const $textarea = $editor.querySelector('[name=content]')
     const $input = $editor.querySelector('[name=title]')
-    console.log($input.value)
     // const selection = window.getSelection().getRangeAt(0)
     // selection.collapse(e.target, 1)
 
@@ -51,7 +50,8 @@ export default function Editor({ $target, initialState, onEditing }) {
     if (timerId) clearTimeout(timerId)
     timerId = setTimeout(async () => {
       this.state = nextState
-      await onEditing(nextState)
+      const { title, content } = this.state
+      if (title || content) await onEditing(nextState)
       // await setCaret($target)
     }, 1000)
     // }
