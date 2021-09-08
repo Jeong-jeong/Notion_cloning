@@ -19,21 +19,25 @@ export default function DocEditPage({
 
   let tempDocSaveKey = `temp-document-${this.state.id}`
   let getStorageValue = getItem(tempDocSaveKey, {
-    // FIXME: 업데이트가 안됨.
     id: '',
     title: '',
     content: '',
   })
 
+  let timerId
   const editor = new Editor({
     $target: $docEditPage,
     initialState: getStorageValue,
-    onEditing: async (nextDoc) => {
-      setItem(tempDocSaveKey, {
-        ...nextDoc,
-        saveDate: new Date(),
-      })
-      await fetchDoc()
+    onEditing: (nextDoc) => {
+      if (timerId) clearTimeout(timerId)
+      // list 껄떡임 방지
+      timerId = setTimeout(async () => {
+        setItem(tempDocSaveKey, {
+          ...nextDoc,
+          saveDate: new Date(),
+        })
+        await fetchDoc()
+      }, 0)
     },
   })
 
@@ -90,6 +94,7 @@ export default function DocEditPage({
         getStorageValue.saveDate > nextDoc.updatedAt
         // 스토리지가 더 최신일 경우
       ) {
+        // FIXME: 로컬 스토리지에 올라갔다 바로 삭제됨
         await request(`/documents/${id}`, {
           // 문서 수정
           method: 'PUT',
