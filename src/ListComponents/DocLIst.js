@@ -92,6 +92,7 @@ export default function DocList({
           break
         case 'delete-button':
           await deleteDoc(id)
+          deleteToggle(id)
           break
         case 'doc-list-item-wrapper ':
         case 'doc-list-item-wrapper toggled':
