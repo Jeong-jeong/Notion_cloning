@@ -17,7 +17,6 @@ export default function DocEditPage({
 
   this.state = initialState
 
-  let timerId
   let tempDocSaveKey = `temp-document-${this.state.id}`
   let getStorageValue = getItem(tempDocSaveKey, {
     // FIXME: 업데이트가 안됨.
@@ -35,7 +34,6 @@ export default function DocEditPage({
         saveDate: new Date(),
       })
       await fetchDoc()
-      await pushUrl(`/documents/${nextDoc.id}`)
     },
   })
 
@@ -47,17 +45,21 @@ export default function DocEditPage({
         await fetchDoc() // render하면 바로 fetch 실행
         return // id가 다를 경우만 fetch 부르고 setState 또 실행 안함
       }
-      // li 클릭 시 nextState가 초기화 되기 때문에 값이 있을 떄만 바꿔줌
-      if (nextState.title || nextState.content) {
-        this.state = nextState
-      }
-      editor.setState(this.state)
+      // li 클릭 시 nextState가 초기화 되기 때문에 값이 있을 때만 바꿔줌
+      // if (nextState.title || nextState.content) {
+      this.state = nextState
+      // }
+      editor.setState({
+        id: this.state.id,
+        title: this.state.title,
+        content: this.state.content,
+      })
     }
 
     this.render()
   }
 
-  this.render = async () => {
+  this.render = () => {
     // TODO: 외부에서 render 하기
     $target.appendChild($docEditPage)
   }
@@ -80,6 +82,7 @@ export default function DocEditPage({
         id: '',
         title: '',
         content: '',
+        saveDate: '',
       })
 
       if (
@@ -87,7 +90,6 @@ export default function DocEditPage({
         getStorageValue.saveDate > nextDoc.updatedAt
         // 스토리지가 더 최신일 경우
       ) {
-        this.setState(getStorageValue) // state 변경
         await request(`/documents/${id}`, {
           // 문서 수정
           method: 'PUT',
@@ -96,8 +98,9 @@ export default function DocEditPage({
             content: getStorageValue.content,
           }),
         })
+        this.setState(getStorageValue) // state 변경
         removeItem(tempDocSaveKey) // 스토리지 삭제
-        pushUrl(`/documents/${id}`)
+        pushUrl(`/documents/${id}`, false) // false면 edit 렌더 안함
         return
       }
 

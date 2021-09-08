@@ -13,16 +13,25 @@ export default function App({ $target }) {
     $target,
   })
 
-  this.route = () => {
+  this.route = (routeEdit = true) => {
     const { pathname } = window.location
     if (pathname === '/') {
       docEditPage.inVisible()
       docListPage.setState()
     } else if (pathname.indexOf('/documents/') === 0) {
+      console.log('app render')
       const [, , documentId] = pathname.split('/')
       docEditPage.visible()
       docListPage.setState()
-      docEditPage.setState({ id: parseInt(documentId), title: '', content: '' })
+      if (routeEdit) {
+        console.log('edit render')
+        // routeEdit이 false면 render 안함
+        docEditPage.setState({
+          id: parseInt(documentId),
+          title: '',
+          content: '',
+        })
+      }
     } else {
       $target.innerHTML = `요청하신 페이지를 찾을 수 없습니다 🥲`
       docEditPage.inVisible()
@@ -30,7 +39,7 @@ export default function App({ $target }) {
   }
   this.route()
 
-  pushRouter(() => this.route())
+  pushRouter((routeList) => this.route(routeList))
 
   window.onpopstate = (e) => {
     // 뒤로가기 라우팅
