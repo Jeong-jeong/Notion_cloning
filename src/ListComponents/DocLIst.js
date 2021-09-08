@@ -1,6 +1,6 @@
 import { ACTIVE_SAVE_KEY, TOGGLE_SAVE_KEY } from '../constants.js'
 import { pushUrl } from '../router.js'
-import { removeItem, setItem, getItem } from '../storage.js'
+import { setItem, getItem } from '../storage.js'
 
 export default function DocList({
   $target,
@@ -82,9 +82,10 @@ export default function DocList({
           break
         case 'doc-list-item-wrapper ':
         case 'doc-list-item-wrapper toggled':
-          await pushUrl(`/documents/${id}`) // 여기서 render 이루어짐
+          const { pathname } = window.location
+          const [, , documentId] = pathname.split('/')
 
-          if ($li.querySelector('ul > li')) {
+          if ($li.querySelector('li > ul')) {
             // 눌렀을 때 자식이 있다면 li의 id를 스토리지에 키로 저장, toggled 클래스 추가
             setItem(TOGGLE_SAVE_KEY, {
               ...getItem(TOGGLE_SAVE_KEY),
@@ -102,6 +103,12 @@ export default function DocList({
           setItem(ACTIVE_SAVE_KEY, {
             id,
           })
+
+          if (documentId !== id) {
+            await pushUrl(`/documents/${id}`)
+          } else {
+            this.render()
+          }
           break
         default:
           break
