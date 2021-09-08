@@ -44,7 +44,7 @@ export default function DocList({
               }'
                 style='padding-left: ${depth * paddingDepth}px'
               >
-                <i class ='drop-down-arrow'></i>${title}
+                <i class ='dropdown-arrow'></i>${title}
                 <div class='button-wrapper'>
                   <button type='button' class='delete-button' title='삭제하기'>-</button>
                   <button type='button' class='add-button' title='추가하기'>+</button>
