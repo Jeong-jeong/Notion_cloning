@@ -49,7 +49,7 @@ export default function Editor({ $target, initialState, onEditing }) {
 
     if (timerId) clearTimeout(timerId)
     timerId = setTimeout(async () => {
-      this.state = nextState
+      this.setState(nextState)
       const { title, content } = this.state
       if (title || content) await onEditing(nextState)
       // await setCaret($target)

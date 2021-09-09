@@ -37,7 +37,7 @@ export default function DocListPage({ $target, initialState = [] }) {
         method: 'DELETE',
       })
       this.setState()
-      pushUrl('/')
+      pushUrl('/', false)
     },
   })
 
