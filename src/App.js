@@ -34,12 +34,11 @@ export default function App({ $target }) {
       }
     } else {
       $target.innerHTML = `요청하신 페이지를 찾을 수 없습니다 🥲`
-      docEditPage.inVisible()
     }
   }
   this.route()
 
-  pushRouter((routeList) => this.route(routeList))
+  pushRouter((routeEdit) => this.route(routeEdit))
 
   window.onpopstate = (e) => {
     // 뒤로가기 라우팅
