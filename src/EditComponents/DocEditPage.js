@@ -22,12 +22,13 @@ export default function DocEditPage({
     id: '',
     title: '',
     content: '',
+    saveDate: '',
   })
 
   let timerId
   const editor = new Editor({
     $target: $docEditPage,
-    initialState: getStorageValue,
+    initialState: this.state,
     onEditing: (nextDoc) => {
       if (timerId) clearTimeout(timerId)
       // list 껄떡임 방지
@@ -64,7 +65,6 @@ export default function DocEditPage({
   }
 
   this.render = () => {
-    // TODO: 외부에서 render 하기
     $target.appendChild($docEditPage)
   }
 
@@ -89,12 +89,13 @@ export default function DocEditPage({
         saveDate: '',
       })
 
+      console.log(getStorageValue, nextDoc)
+
       if (
         getStorageValue.saveDate &&
         getStorageValue.saveDate > nextDoc.updatedAt
         // 스토리지가 더 최신일 경우
       ) {
-        // FIXME: 로컬 스토리지에 올라갔다 바로 삭제됨
         await request(`/documents/${id}`, {
           // 문서 수정
           method: 'PUT',
@@ -103,7 +104,6 @@ export default function DocEditPage({
             content: getStorageValue.content,
           }),
         })
-        this.setState(getStorageValue) // state 변경
         removeItem(tempDocSaveKey) // 스토리지 삭제
         pushUrl(`/documents/${id}`, false) // false면 edit 렌더 안함
         return
