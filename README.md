@@ -1,5 +1,9 @@
 # 노션 클로닝 프로젝트
+## 🤸🏽‍♀️ 배포 주소
 [접속하기](https://notion-cloning.vercel.app)
+
+## 🧐 회고록
+[접속하기](https://velog.io/@jeongs/TIL-노션-클로닝)
 
 ## 📌 데모
 ### 토글 구현 및 토글 상태 저장
