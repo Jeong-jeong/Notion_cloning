@@ -35,25 +35,31 @@ export default function Editor({ $target, initialState, onEditing }) {
 
   this.render()
 
+  let timerId
   $editor.addEventListener('keyup', (e) => {
-    const $textarea = $editor.querySelector('[name=content]')
-    const $input = $editor.querySelector('[name=title]')
-    // const selection = window.getSelection().getRangeAt(0)
+    const { target } = e
+    const $textarea = document.querySelector('.textarea')
+    const selection = window.getSelection().getRangeAt(0)
     // selection.collapse(e.target, 1)
 
-    const nextState = {
-      ...this.state,
-      title: $input.value, // target으로 할 경우 focus가 사라지면 undefined이 들어감
-      content: $textarea.innerHTML,
-    }
+    const name = target.getAttribute('name')
 
-    if (timerId) clearTimeout(timerId)
-    timerId = setTimeout(async () => {
-      this.setState(nextState)
-      const { title, content } = this.state
-      if (title || content) await onEditing(nextState)
-      // await setCaret($target)
-    }, 1000)
-    // }
+    if (this.state[name] !== undefined) {
+      // 빈문자열 === false
+      const nextState = {
+        ...this.state,
+        [name]: name === 'title' ? target.value : target.innerHTML,
+      }
+
+      if (timerId) clearTimeout(timerId)
+      timerId = setTimeout(async () => {
+        this.state = nextState
+        await onEditing(this.state)
+        console.log('2초 지나고 onEditing 실행')
+        await target.focus()
+        // await setCaret($target)
+        console.log('caret 저장')
+      }, 2000)
+    }
   })
 }
