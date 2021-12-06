@@ -3,7 +3,6 @@ import { setCaret } from './positionCaret.js'
 export default function Editor({ $target, initialState, onEditing }) {
   const $editor = document.createElement('div')
   let isInitialize = false // 렌더링을 한번만
-  let timerId // 디바운스
 
   $editor.className = 'editor-wrap'
   $target.appendChild($editor) // 가장 하위 요소는 바로 render 해줌
